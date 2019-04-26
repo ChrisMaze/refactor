@@ -8,7 +8,6 @@ public class Order {
     public List<OrderLineItem> orderLineItemList;
     public List<BigDecimal> discounts;
     public BigDecimal tax;
-
     public Order(List<OrderLineItem> orderLineItemList, List<BigDecimal> discounts) {
         this.orderLineItemList = orderLineItemList;
         this.discounts = discounts;

@@ -7,7 +7,6 @@ public class OrderLineItem {
     public OrderLineItem(double price) {
         this.price = new BigDecimal(price);
     }
-
     public BigDecimal getPrice() {
         return price;
     }
