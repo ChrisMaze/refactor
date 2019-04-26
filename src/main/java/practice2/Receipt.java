@@ -14,22 +14,30 @@ public class Receipt {
 
     public double CalculateGrandTotal(List<Product> products, List<OrderItem> items) {
         BigDecimal subTotal = calculateSubtotal(products, items);
+        subTotal = getBigDecimal(products, items, subTotal);
+        BigDecimal grandTotal = getGrandTotal(subTotal);
+        return getTotalDoubleValue(grandTotal);
+    }
 
-        for (Product product : products) {
-            OrderItem curItem = findOrderItemByProduct(items, product);
-
-            BigDecimal reducedPrice = product.getPrice()
-                    .multiply(product.getDiscountRate())
-                    .multiply(new BigDecimal(curItem.getCount()));
-
-            subTotal = subTotal.subtract(reducedPrice);
-        }
-        BigDecimal taxTotal = subTotal.multiply(tax);
-        BigDecimal grandTotal = subTotal.add(taxTotal);
-
+    private double getTotalDoubleValue(BigDecimal grandTotal) {
         return grandTotal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
+    private BigDecimal getGrandTotal(BigDecimal subTotal) {
+        BigDecimal taxTotal = subTotal.multiply(tax);
+        return subTotal.add(taxTotal);
+    }
+
+    private BigDecimal getBigDecimal(List<Product> products, List<OrderItem> items, BigDecimal subTotal) {
+        for (Product product : products) {
+            OrderItem curItem = findOrderItemByProduct(items, product);
+            BigDecimal reducedPrice = product.getPrice()
+                    .multiply(product.getDiscountRate())
+                    .multiply(new BigDecimal(curItem.getCount()));
+            subTotal = subTotal.subtract(reducedPrice);
+        }
+        return subTotal;
+    }
 
     private OrderItem findOrderItemByProduct(List<OrderItem> items, Product product) {
         OrderItem curItem = null;
@@ -41,7 +49,6 @@ public class Receipt {
         }
         return curItem;
     }
-
     private BigDecimal calculateSubtotal(List<Product> products, List<OrderItem> items) {
         BigDecimal subTotal = new BigDecimal(0);
         for (Product product : products) {
